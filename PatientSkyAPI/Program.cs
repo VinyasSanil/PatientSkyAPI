@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using PatientSkyAPI;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,9 +19,9 @@ app.UseHttpsRedirection();
 app.MapPost("/findAvailableTime", (AppointmentRequest request) =>
 {
     AppointmentHandler appointmentHandler = new AppointmentHandler();
-    DateRanges dateRanges = appointmentHandler.SplitDateRange(request.PeriodToSearch);
-    List<Calendar> calendarNames = appointmentHandler.GetCalendarRecord(request.CalendarIds);
-    List<CalendarAppointmentDetails> calendarAppointments = appointmentHandler.GetCalendarAppointmentDetails(request.CalendarIds, dateRanges);
+    //DateRanges dateRanges = appointmentHandler.SplitDateRange(request.PeriodToSearch);
+    //List<Calendar> calendarNames = appointmentHandler.GetCalendarRecord(request.CalendarIds);
+    List<AvailableTimes> calendarAppointments = appointmentHandler.GetAvailableTimes(request.CalendarIds, request.PeriodToSearch, request.Duration);
     
     return Results.Ok();
 });

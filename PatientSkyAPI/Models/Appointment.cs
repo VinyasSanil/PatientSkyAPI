@@ -24,16 +24,21 @@ public class TimeSlots
 {
   public Guid id {get; set;}
   public Guid calendar_id {get; set;}
-  public DateTimeOffset start {get; set;}
-  public DateTimeOffset end {get; set;}
+  public DateTime start {get; set;}
+  public DateTime end {get; set;}
 }
 
 public class DateRanges {
-  public DateTimeOffset startDate {get; set;}
-  public DateTimeOffset endDate {get; set;}
+  public DateTime startDate {get; set;}
+  public DateTime endDate {get; set;}
 }
 
 public class AvailableTimes {
   public Guid CalendarId {get; set;}
   public List<DateRanges> dateRanges {get; set;}
+}
+
+public class ResponseModel{
+  public bool Success {get; set;}
+  public string Message {get; set;}
 }
