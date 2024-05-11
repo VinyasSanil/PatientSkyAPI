@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using PatientSkyAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,31 +19,15 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/findAvailableTime", (Guid[] calendarIds,int duration,DateTimeOffset periodToSerach, string timeInterval, Guid timeSlot= default) =>
+app.MapPost("/findAvailableTime", (AppointmentRequest request) =>
 {
     AppointmentHandler appointmentHandler = new AppointmentHandler();
-    List<string> calendarNames = appointmentHandler.GetCalendarRecord
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+    DateRanges dateRanges = appointmentHandler.SplitDateRange(request.PeriodToSearch);
+    List<Calendar> calendarNames = appointmentHandler.GetCalendarRecord(request.CalendarIds);
+    List<CalendarAppointmentDetails> calendarAppointments = appointmentHandler.GetCalendarAppointmentDetails(request.CalendarIds, dateRanges);
+    
+    return Results.Ok();
+});
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
