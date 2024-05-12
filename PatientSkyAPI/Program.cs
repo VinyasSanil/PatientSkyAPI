@@ -21,9 +21,9 @@ app.MapPost("/findAvailableTime", (AppointmentRequest request) =>
     AppointmentHandler appointmentHandler = new AppointmentHandler();
     //DateRanges dateRanges = appointmentHandler.SplitDateRange(request.PeriodToSearch);
     //List<Calendar> calendarNames = appointmentHandler.GetCalendarRecord(request.CalendarIds);
-    List<AvailableTimes> calendarAppointments = appointmentHandler.GetAvailableTimes(request.CalendarIds, request.PeriodToSearch, request.Duration);
+    List<AvailableTimes> AvailableTimeList = appointmentHandler.GetAvailableTimes(request.CalendarIds, request.PeriodToSearch, request.Duration, request.TimeSlotType);
     
-    return Results.Ok();
+    return AvailableTimeList;
 });
 
 app.Run();

@@ -5,7 +5,7 @@ public class Calendar
     public Guid id { get; set; }
 }
 
-public record AppointmentRequest([FromBody] Guid[] CalendarIds, int Duration, string PeriodToSearch, string TimeInterval, Guid TimeSlot = default);
+public record AppointmentRequest([FromBody] Guid[] CalendarIds, int Duration, string PeriodToSearch, Guid? TimeSlotType = null);
 
 public class CalendarAppointmentDetails:Calendar
 {
@@ -26,6 +26,7 @@ public class TimeSlots
   public Guid calendar_id {get; set;}
   public DateTime start {get; set;}
   public DateTime end {get; set;}
+  public Guid type_id {get; set;}
 }
 
 public class DateRanges {

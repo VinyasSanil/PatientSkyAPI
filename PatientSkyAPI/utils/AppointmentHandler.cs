@@ -13,7 +13,7 @@ public class AppointmentHandler
     }).ToList();
   }
 
-  public List<AvailableTimes> GetAvailableTimes(Guid[] CalendarIds, string DateRange, int Duration)
+  public List<AvailableTimes> GetAvailableTimes(Guid[] CalendarIds, string DateRange, int Duration, Guid? TimeSlotType)
   {
     try
     {
@@ -29,7 +29,8 @@ public class AppointmentHandler
       var timeSlotsList = JsonSerializer.Deserialize<List<TimeSlots>>(timeSlotJsonData);
       foreach(var calendarId in CalendarIds){
         var dateRangeList = new List<DateRanges>();
-        foreach(var timeSlot in timeSlotsList.Where(x => x.calendar_id == calendarId && x.start >= intervalStart && x.end <= intervalEnd)){
+        var combinedTimes = new List<DateRanges>();
+        foreach(var timeSlot in timeSlotsList.Where(x => x.calendar_id == calendarId && x.start >= intervalStart && x.end <= intervalEnd && (TimeSlotType == null || x.type_id == TimeSlotType))){
          bool isAvailable = true;
          if(appointmentsList.Any(x => x.calendar_id == calendarId && !(timeSlot.start >= x.end || timeSlot.end <= x.start))){
           isAvailable = false;
@@ -40,18 +41,44 @@ public class AppointmentHandler
          //      break;
          //    }
          //  }
-         if(isAvailable && (timeSlot.end - timeSlot.start).TotalMinutes > Duration){
-           dateRangeList.Add(new DateRanges {
-             startDate = timeSlot.start,
-             endDate = timeSlot.end
-           });
-         }
+          if(isAvailable){
+            dateRangeList.Add(new DateRanges {
+              startDate = timeSlot.start,
+              endDate = timeSlot.end
+            });
+          }
         }
+
+        //Combining Available times to create larger duration
         if(dateRangeList.Any()){
+          dateRangeList = dateRangeList.OrderBy(x => x.startDate).ToList();
+          DateRanges currentRange = dateRangeList[0];
+          for(int i=1; i < dateRangeList.Count(); i++){
+            DateRanges nextRange = dateRangeList[i];
+            if(currentRange.endDate == nextRange.startDate){
+              currentRange.endDate = nextRange.endDate;
+              dateRangeList.RemoveAt(i);
+              i--;
+            }else{
+              if((currentRange.endDate - currentRange.startDate).TotalMinutes > Duration){
+                combinedTimes.Add(new DateRanges{
+                  startDate = currentRange.startDate,
+                  endDate = currentRange.endDate
+                });
+              }
+              currentRange = nextRange;
+            }
+          }
+          if((currentRange.endDate - currentRange.startDate).TotalMinutes > Duration){
+            combinedTimes.Add(new DateRanges{
+              startDate = currentRange.startDate,
+              endDate = currentRange.endDate
+            });
+          }
           availableTimes.Add(new AvailableTimes{
           CalendarId = calendarId,
-          dateRanges = dateRangeList
-        });
+          dateRanges = combinedTimes
+          });
         }
       }
       return availableTimes;
