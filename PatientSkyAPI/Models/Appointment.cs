@@ -7,11 +7,6 @@ public class Calendar
 
 public record AppointmentRequest([FromBody] Guid[] CalendarIds, int Duration, string PeriodToSearch, Guid? TimeSlotType = null);
 
-public class CalendarAppointmentDetails:Calendar
-{
-  public List<Appointments> appointments {get; set;}
-  public List<TimeSlots> timeslots {get; set;}
-}
 public class Appointments
 {
   public Guid id {get; set;}
@@ -37,9 +32,4 @@ public class DateRanges {
 public class AvailableTimes {
   public Guid CalendarId {get; set;}
   public List<DateRanges> dateRanges {get; set;}
-}
-
-public class ResponseModel{
-  public bool Success {get; set;}
-  public string Message {get; set;}
 }

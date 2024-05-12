@@ -21,6 +21,8 @@ public class AppointmentHandler
       string[] parts = DateRange.Split('/');
       DateTime intervalStart = DateTime.Parse(parts[0]);
       DateTime intervalEnd = DateTime.Parse(parts[1]);
+
+      //Shared Data has been split and stored in seperate files 
       string appointmentFilePath = "Data/Appointment.json";
       string timeSlotFilePath = "Data/TimeSlots.json";
       string appointmentJsonData = File.ReadAllText(appointmentFilePath);
@@ -35,12 +37,6 @@ public class AppointmentHandler
          if(appointmentsList.Any(x => x.calendar_id == calendarId && !(timeSlot.start >= x.end || timeSlot.end <= x.start))){
           isAvailable = false;
          }
-         //  foreach(var appointment in appointmentsList.Where(x => x.calendar_id == calendarId && x.start >= intervalStart && x.end <= intervalEnd)){
-         //    if(!(timeSlot.start >= appointment.end || timeSlot.end <= appointment.start)){
-         //      isAvailavle = false;
-         //      break;
-         //    }
-         //  }
           if(isAvailable){
             dateRangeList.Add(new DateRanges {
               startDate = timeSlot.start,
@@ -89,19 +85,4 @@ public class AppointmentHandler
     }
   }
 
-  // public DateRanges SplitDateRange(string dateRange){
-  //    var parts = dateRange.Split('/');
-  //    DateTimeOffset start;
-  //    DateTimeOffset end;
-  //    if (parts.Length == 2)
-  //     {
-  //       DateTimeOffset.TryParseExact(parts[0], "yyyy-MM-ddTHH:mm:ssK", null, System.Globalization.DateTimeStyles.None, out start);
-  //       DateTimeOffset.TryParseExact(parts[1], "yyyy-MM-ddTHH:mm:ssK", null, System.Globalization.DateTimeStyles.None, out end);
-  //       return new DateRanges{
-  //         startDate = start,
-  //         endDate = end
-  //       };
-  //     }
-  //    return new DateRanges();
-  // }
 }
