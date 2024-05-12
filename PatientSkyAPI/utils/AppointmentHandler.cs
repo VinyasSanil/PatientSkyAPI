@@ -2,17 +2,6 @@ using System;
 using System.Text.Json;
 public class AppointmentHandler
 {
-  public List<Calendar> GetCalendarRecord(Guid[] calendarIds){
-    string jsonFilePath = "Data/CalendarMap.json";
-    string jsonData = File.ReadAllText(jsonFilePath);
-    List<Calendar> people = JsonSerializer.Deserialize<List<Calendar>>(jsonData);
-    return people.Where(x => calendarIds.Contains(x.id)).Select(x => new Calendar
-    {
-      name = x.name,
-      id = x.id
-    }).ToList();
-  }
-
   public List<AvailableTimes> GetAvailableTimes(Guid[] CalendarIds, string DateRange, int Duration, Guid? TimeSlotType)
   {
     try
